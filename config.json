@@ -1,0 +1,35 @@
+{
+  "seatTypes": {
+    "大厅": {
+      "name": "大厅",
+      "basePrice": 100
+    },
+    "VIP单间": {
+      "name": "VIP单间",
+      "basePrice": 200
+    }
+  },
+  "durationTypes": {
+    "月卡": {
+      "name": "月卡",
+      "days": 30,
+      "discount": 0.95
+    },
+    "季卡": {
+      "name": "季卡",
+      "days": 90,
+      "discount": 0.90
+    },
+    "半年卡": {
+      "name": "半年卡",
+      "days": 180,
+      "discount": 0.85
+    },
+    "年卡": {
+      "name": "年卡",
+      "days": 365,
+      "discount": 0.80
+    }
+  }
+}
+

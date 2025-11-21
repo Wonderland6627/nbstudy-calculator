@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>自习室价格计算器</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <h1>自习室价格计算器</h1>
+        
+        <div class="form-group">
+            <label for="seatType">座位类型</label>
+            <select id="seatType">
+                <option value="">请选择座位类型</option>
+            </select>
+        </div>
+
+        <div class="form-group">
+            <label for="durationType">时长类型</label>
+            <select id="durationType">
+                <option value="">请选择时长类型</option>
+            </select>
+        </div>
+
+        <div class="form-group">
+            <label for="startDate">起始日期</label>
+            <input type="date" id="startDate">
+        </div>
+
+        <div class="form-group">
+            <label for="endDate">结束日期</label>
+            <input type="date" id="endDate">
+            <small class="hint">可根据时长类型自动计算，也可手动修改</small>
+        </div>
+
+        <div class="form-group">
+            <button id="calculateBtn" class="btn-primary">计算价格</button>
+        </div>
+
+        <div id="result" class="result hidden">
+            <h2>计算结果</h2>
+            <div class="result-content">
+                <p><strong>座位类型：</strong><span id="resultSeatType"></span></p>
+                <p><strong>时长类型：</strong><span id="resultDurationType"></span></p>
+                <p><strong>起始日期：</strong><span id="resultStartDate"></span></p>
+                <p><strong>结束日期：</strong><span id="resultEndDate"></span></p>
+                <p><strong>总天数：</strong><span id="resultDays"></span> 天</p>
+                <p class="price"><strong>总价格：</strong><span id="resultPrice"></span> 元</p>
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
+
