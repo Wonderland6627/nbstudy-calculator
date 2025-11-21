@@ -7,8 +7,24 @@
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
+    <!-- 价目表弹窗 -->
+    <div id="priceListModal" class="modal hidden">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>价目表</h2>
+                <button class="modal-close" id="closeModal">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div id="priceTable"></div>
+            </div>
+        </div>
+    </div>
+    
     <div class="container">
-        <h1>宁博自习室价格计算器</h1>
+        <div class="header-with-btn">
+            <h1>宁博自习室价格计算器</h1>
+            <button id="priceListBtn" class="price-list-btn" title="查看价目表">价目表</button>
+        </div>
         
         <div class="form-group">
             <label for="seatType">座位类型</label>

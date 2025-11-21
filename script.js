@@ -16,6 +16,9 @@ async function loadConfig() {
         
         // 初始化下拉选项
         initSelectOptions();
+        
+        // 预生成价目表（但不显示）
+        generatePriceTable();
     } catch (error) {
         console.error('Failed to load config:', error);
         alert('配置文件加载失败，请检查 config.json 文件');
@@ -188,6 +191,90 @@ function initVersion() {
     }
 }
 
+// 生成价目表
+function generatePriceTable() {
+    const tableContainer = document.getElementById('priceTable');
+    if (!tableContainer) return;
+    
+    // 创建表格
+    const table = document.createElement('table');
+    table.className = 'price-table';
+    
+    // 创建表头
+    const thead = document.createElement('thead');
+    const headerRow = document.createElement('tr');
+    
+    // 第一列：时长类型（表头为空）
+    const header1 = document.createElement('th');
+    header1.textContent = '';
+    
+    // 后续列：各个座位类型
+    const seatKeys = Object.keys(seatTypes);
+    seatKeys.forEach(seatKey => {
+        const seatConfig = seatTypes[seatKey];
+        const header = document.createElement('th');
+        header.textContent = seatConfig.name;
+        header.className = 'seat-header';
+        headerRow.appendChild(header);
+    });
+    
+    headerRow.insertBefore(header1, headerRow.firstChild);
+    thead.appendChild(headerRow);
+    table.appendChild(thead);
+    
+    // 创建表体
+    const tbody = document.createElement('tbody');
+    
+    // 遍历时长类型生成表格行
+    Object.keys(durationTypes).forEach(durationKey => {
+        const durationConfig = durationTypes[durationKey];
+        const row = document.createElement('tr');
+        
+        // 第一列：时长类型名称
+        const durationCell = document.createElement('td');
+        durationCell.className = 'duration-type';
+        durationCell.textContent = durationConfig.name;
+        row.appendChild(durationCell);
+        
+        // 后续列：各个座位类型对应的价格
+        seatKeys.forEach(seatKey => {
+            const seatConfig = seatTypes[seatKey];
+            const prices = seatConfig.prices;
+            const price = prices[durationKey];
+            
+            const priceCell = document.createElement('td');
+            priceCell.className = 'price';
+            if (price !== undefined) {
+                priceCell.textContent = `${price.toLocaleString('zh-CN')} 元`;
+            } else {
+                priceCell.textContent = '-';
+            }
+            row.appendChild(priceCell);
+        });
+        
+        tbody.appendChild(row);
+    });
+    
+    table.appendChild(tbody);
+    tableContainer.innerHTML = '';
+    tableContainer.appendChild(table);
+}
+
+// 打开价目表弹窗
+function openPriceListModal() {
+    generatePriceTable();
+    const modal = document.getElementById('priceListModal');
+    modal.classList.remove('hidden');
+    document.body.style.overflow = 'hidden'; // 防止背景滚动
+}
+
+// 关闭价目表弹窗
+function closePriceListModal() {
+    const modal = document.getElementById('priceListModal');
+    modal.classList.add('hidden');
+    document.body.style.overflow = ''; // 恢复滚动
+}
+
 // 事件监听
 document.addEventListener('DOMContentLoaded', () => {
     // 初始化版本号
@@ -211,5 +298,25 @@ document.addEventListener('DOMContentLoaded', () => {
     
     // 计算按钮点击事件
     document.getElementById('calculateBtn').addEventListener('click', calculatePrice);
+    
+    // 价目表按钮点击事件
+    document.getElementById('priceListBtn').addEventListener('click', openPriceListModal);
+    
+    // 关闭弹窗按钮点击事件
+    document.getElementById('closeModal').addEventListener('click', closePriceListModal);
+    
+    // 点击弹窗背景关闭
+    document.getElementById('priceListModal').addEventListener('click', (e) => {
+        if (e.target.id === 'priceListModal') {
+            closePriceListModal();
+        }
+    });
+    
+    // ESC键关闭弹窗
+    document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape') {
+            closePriceListModal();
+        }
+    });
 });
 
