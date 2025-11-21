@@ -93,7 +93,7 @@ input[type="date"]:focus {
 }
 
 .btn-primary {
-    width: 100%;
+    flex: 0 0 calc(75% - 5px);
     padding: 15px;
     background: linear-gradient(135deg, #ff8c42 0%, #ffa366 100%);
     color: white;
@@ -199,37 +199,67 @@ input[type="date"]:focus {
     font-family: 'Courier New', monospace;
 }
 
-/* 价目表按钮 */
-.price-list-btn {
+/* 座位图按钮 */
+.seat-map-btn {
     position: absolute;
     right: 0;
     top: 50%;
     transform: translateY(-50%);
     padding: 8px 16px;
-    background: linear-gradient(135deg, #ff8c42 0%, #ffa366 100%);
+    background: linear-gradient(135deg, #4a90e2 0%, #5ba3f5 100%);
     color: white;
     border: none;
     border-radius: 20px;
     font-size: 13px;
     font-weight: 600;
     cursor: pointer;
-    box-shadow: 0 2px 10px rgba(255, 140, 66, 0.25);
+    box-shadow: 0 2px 10px rgba(74, 144, 226, 0.25);
     white-space: nowrap;
     transition: transform 0.2s, box-shadow 0.2s;
     z-index: 10;
-    /* 确保按钮高度和标题行高对齐 */
     height: fit-content;
     display: flex;
     align-items: center;
 }
 
-.price-list-btn:hover {
+.seat-map-btn:hover {
     transform: translateY(-50%) translateY(-1px);
-    box-shadow: 0 4px 15px rgba(255, 140, 66, 0.35);
+    box-shadow: 0 4px 15px rgba(74, 144, 226, 0.35);
+}
+
+.seat-map-btn:active {
+    transform: translateY(-50%);
+}
+
+/* 按钮组 */
+.button-group {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+}
+
+/* 价目表按钮 */
+.price-list-btn {
+    flex: 0 0 calc(25% - 5px);
+    padding: 15px;
+    background: linear-gradient(135deg, #4a90e2 0%, #5ba3f5 100%);
+    color: white;
+    border: none;
+    border-radius: 10px;
+    font-size: 18px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: transform 0.2s, box-shadow 0.2s;
+    box-shadow: 0 2px 10px rgba(74, 144, 226, 0.25);
+}
+
+.price-list-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 5px 20px rgba(74, 144, 226, 0.35);
 }
 
 .price-list-btn:active {
-    transform: translateY(-50%);
+    transform: translateY(0);
 }
 
 /* 弹窗样式 */
@@ -269,6 +299,12 @@ input[type="date"]:focus {
     overflow: hidden;
     box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
     animation: slideUp 0.3s;
+}
+
+/* 座位图弹窗 - 更大尺寸 */
+.seat-map-modal {
+    max-width: 900px;
+    max-height: 90vh;
 }
 
 @keyframes slideUp {
@@ -378,6 +414,62 @@ input[type="date"]:focus {
     text-align: center;
 }
 
+/* 座位图样式 */
+.seat-map-body {
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    height: calc(90vh - 80px);
+}
+
+.floor-tabs {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 20px;
+    justify-content: center;
+}
+
+.floor-tab {
+    padding: 10px 30px;
+    background: #f0f0f0;
+    border: 2px solid #e0e0e0;
+    border-radius: 10px;
+    font-size: 16px;
+    font-weight: 600;
+    color: #666;
+    cursor: pointer;
+    transition: all 0.3s;
+}
+
+.floor-tab:hover {
+    background: #e8e8e8;
+    border-color: #4a90e2;
+}
+
+.floor-tab.active {
+    background: linear-gradient(135deg, #4a90e2 0%, #5ba3f5 100%);
+    color: white;
+    border-color: #4a90e2;
+}
+
+.seat-map-container {
+    flex: 1;
+    overflow: auto;
+    background: #f8f9fa;
+    border-radius: 10px;
+    padding: 20px;
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+}
+
+#seatMapCanvas {
+    background: white;
+    border: 2px solid #e0e0e0;
+    border-radius: 8px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+}
+
 /* 移动端优化 */
 @media (max-width: 480px) {
     body {
@@ -430,8 +522,7 @@ input[type="date"]:focus {
         line-height: 1.2;
     }
     
-    .price-list-btn {
-        /* 保持绝对定位，在右侧 */
+    .seat-map-btn {
         position: absolute;
         right: 0;
         top: 50%;
@@ -439,16 +530,54 @@ input[type="date"]:focus {
         padding: 6px 12px;
         font-size: 11px;
         width: auto;
-        min-width: 60px;
+        min-width: 55px;
         height: fit-content;
     }
     
-    .price-list-btn:hover {
+    .seat-map-btn:hover {
         transform: translateY(-50%) translateY(-1px);
     }
     
-    .price-list-btn:active {
+    .seat-map-btn:active {
         transform: translateY(-50%);
+    }
+    
+    .button-group {
+        flex-direction: column;
+        gap: 10px;
+    }
+    
+    .price-list-btn {
+        width: 100%;
+        padding: 12px;
+        font-size: 16px;
+    }
+    
+    .btn-primary {
+        width: 100%;
+    }
+    
+    .seat-map-modal {
+        max-width: 95%;
+        max-height: 95vh;
+    }
+    
+    .seat-map-body {
+        padding: 15px;
+        height: calc(95vh - 70px);
+    }
+    
+    .floor-tabs {
+        margin-bottom: 15px;
+    }
+    
+    .floor-tab {
+        padding: 8px 20px;
+        font-size: 14px;
+    }
+    
+    .seat-map-container {
+        padding: 10px;
     }
     
     .modal-content {

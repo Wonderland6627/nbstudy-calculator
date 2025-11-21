@@ -2,9 +2,11 @@
 let config = {};
 let seatTypes = {};
 let durationTypes = {};
+let seatMapConfig = {};
+let currentFloor = '2层';
 
 // 版本号 - 每次部署时更新此版本号
-const APP_VERSION = 'v0.0.5';
+const APP_VERSION = 'v0.0.6';
 
 // 加载配置文件
 async function loadConfig() {
@@ -31,9 +33,34 @@ async function loadConfig() {
         
         // 预生成价目表（但不显示）
         generatePriceTable();
+        
+        // 加载座位图配置
+        await loadSeatMapConfig();
     } catch (error) {
         console.error('Failed to load config:', error);
         alert('配置文件加载失败，请检查 config.json 文件');
+    }
+}
+
+// 加载座位图配置文件
+async function loadSeatMapConfig() {
+    try {
+        const timestamp = new Date().getTime();
+        const version = APP_VERSION.replace('v', '').replace(/\./g, '');
+        const url = `seat-map.json?v=${version}&t=${timestamp}`;
+        
+        const response = await fetch(url, {
+            cache: 'no-cache',
+            headers: {
+                'Cache-Control': 'no-cache',
+                'Pragma': 'no-cache'
+            }
+        });
+        
+        seatMapConfig = await response.json();
+    } catch (error) {
+        console.error('Failed to load seat map config:', error);
+        // 座位图配置加载失败不影响主功能，只记录错误
     }
 }
 
@@ -363,8 +390,213 @@ function initApp() {
     document.addEventListener('keydown', (e) => {
         if (e.key === 'Escape') {
             closePriceListModal();
+            closeSeatMapModal();
         }
     });
+    
+    // 座位图按钮点击事件
+    document.getElementById('seatMapBtn').addEventListener('click', openSeatMapModal);
+    
+    // 关闭座位图弹窗按钮点击事件
+    document.getElementById('closeSeatMapModal').addEventListener('click', closeSeatMapModal);
+    
+    // 点击座位图弹窗背景关闭
+    document.getElementById('seatMapModal').addEventListener('click', (e) => {
+        if (e.target.id === 'seatMapModal') {
+            closeSeatMapModal();
+        }
+    });
+    
+    // 楼层切换按钮事件
+    document.querySelectorAll('.floor-tab').forEach(tab => {
+        tab.addEventListener('click', () => {
+            const floor = tab.getAttribute('data-floor');
+            switchFloor(floor);
+        });
+    });
+}
+
+// 打开座位图弹窗
+function openSeatMapModal() {
+    const modal = document.getElementById('seatMapModal');
+    modal.classList.remove('hidden');
+    document.body.style.overflow = 'hidden';
+    // 渲染当前楼层的座位图
+    renderSeatMap(currentFloor);
+}
+
+// 关闭座位图弹窗
+function closeSeatMapModal() {
+    const modal = document.getElementById('seatMapModal');
+    modal.classList.add('hidden');
+    document.body.style.overflow = '';
+}
+
+// 切换楼层
+function switchFloor(floor) {
+    currentFloor = floor;
+    
+    // 更新标签页状态
+    document.querySelectorAll('.floor-tab').forEach(tab => {
+        if (tab.getAttribute('data-floor') === floor) {
+            tab.classList.add('active');
+        } else {
+            tab.classList.remove('active');
+        }
+    });
+    
+    // 重新渲染座位图
+    renderSeatMap(floor);
+}
+
+// 渲染座位图
+function renderSeatMap(floor) {
+    const canvas = document.getElementById('seatMapCanvas');
+    if (!canvas || !seatMapConfig.floors || !seatMapConfig.floors[floor]) {
+        return;
+    }
+    
+    const floorData = seatMapConfig.floors[floor];
+    const baseUnit = seatMapConfig.baseUnit;
+    const seatTypeSizes = seatMapConfig.seatTypeSizes;
+    
+    if (!baseUnit || !seatTypeSizes) {
+        console.error('Seat map config missing baseUnit or seatTypeSizes');
+        return;
+    }
+    
+    const ctx = canvas.getContext('2d');
+    
+    // 计算画布实际尺寸（基于基础单位）
+    const canvasWidth = floorData.unitWidth * baseUnit.width;
+    const canvasHeight = floorData.unitHeight * baseUnit.height;
+    
+    // 设置画布尺寸（考虑缩放）
+    const maxWidth = window.innerWidth * 0.8;
+    const maxHeight = window.innerHeight * 0.7;
+    const scale = Math.min(1, maxWidth / canvasWidth, maxHeight / canvasHeight);
+    
+    canvas.width = canvasWidth * scale;
+    canvas.height = canvasHeight * scale;
+    
+    // 清空画布
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    
+    // 绘制背景
+    ctx.fillStyle = '#ffffff';
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+    
+    // 绘制网格线（可选，帮助查看基础单位）
+    drawGrid(ctx, canvas.width, canvas.height, floorData.unitWidth, floorData.unitHeight, baseUnit.width * scale, baseUnit.height * scale);
+    
+    // 绘制座位
+    floorData.seats.forEach(seat => {
+        const seatSize = seatTypeSizes[seat.type];
+        if (!seatSize) {
+            console.warn(`Unknown seat type: ${seat.type}`);
+            return;
+        }
+        
+        // 计算座位实际位置和尺寸（基于基础单位）
+        const x = seat.unitX * baseUnit.width * scale;
+        const y = seat.unitY * baseUnit.height * scale;
+        const width = seatSize.unitWidth * baseUnit.width * scale;
+        const height = seatSize.unitHeight * baseUnit.height * scale;
+        
+        // 根据座位类型设置颜色
+        let fillColor = '#e0e0e0';
+        let strokeColor = '#999';
+        if (seat.type === 'VIP单间') {
+            fillColor = '#ffd700';
+            strokeColor = '#ff8c42';
+        } else if (seat.type === '大厅') {
+            fillColor = '#4a90e2';
+            strokeColor = '#2e5c8a';
+        }
+        
+        // 绘制座位矩形
+        ctx.fillStyle = fillColor;
+        ctx.strokeStyle = strokeColor;
+        ctx.lineWidth = 2;
+        ctx.fillRect(x, y, width, height);
+        ctx.strokeRect(x, y, width, height);
+        
+        // 绘制朝向箭头
+        drawDirectionArrow(ctx, x, y, width, height, seat.direction);
+        
+        // 绘制座位名称
+        ctx.fillStyle = '#333';
+        ctx.font = `${Math.max(12, 14 * scale)}px Arial`;
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'middle';
+        ctx.fillText(seat.name, x + width / 2, y + height / 2);
+    });
+}
+
+// 绘制网格线（辅助线）
+function drawGrid(ctx, canvasWidth, canvasHeight, unitWidth, unitHeight, unitPixelWidth, unitPixelHeight) {
+    ctx.strokeStyle = '#f0f0f0';
+    ctx.lineWidth = 1;
+    
+    // 绘制垂直线
+    for (let i = 0; i <= unitWidth; i++) {
+        const x = i * unitPixelWidth;
+        ctx.beginPath();
+        ctx.moveTo(x, 0);
+        ctx.lineTo(x, canvasHeight);
+        ctx.stroke();
+    }
+    
+    // 绘制水平线
+    for (let i = 0; i <= unitHeight; i++) {
+        const y = i * unitPixelHeight;
+        ctx.beginPath();
+        ctx.moveTo(0, y);
+        ctx.lineTo(canvasWidth, y);
+        ctx.stroke();
+    }
+}
+
+// 绘制朝向箭头
+function drawDirectionArrow(ctx, x, y, width, height, direction) {
+    ctx.strokeStyle = '#666';
+    ctx.fillStyle = '#666';
+    ctx.lineWidth = 2;
+    
+    const centerX = x + width / 2;
+    const centerY = y + height / 2;
+    const arrowSize = Math.min(width, height) * 0.2;
+    
+    ctx.beginPath();
+    
+    switch (direction) {
+        case 'up':
+            ctx.moveTo(centerX, y + height * 0.2);
+            ctx.lineTo(centerX - arrowSize / 2, y + height * 0.3);
+            ctx.lineTo(centerX + arrowSize / 2, y + height * 0.3);
+            ctx.closePath();
+            break;
+        case 'down':
+            ctx.moveTo(centerX, y + height * 0.8);
+            ctx.lineTo(centerX - arrowSize / 2, y + height * 0.7);
+            ctx.lineTo(centerX + arrowSize / 2, y + height * 0.7);
+            ctx.closePath();
+            break;
+        case 'left':
+            ctx.moveTo(x + width * 0.2, centerY);
+            ctx.lineTo(x + width * 0.3, centerY - arrowSize / 2);
+            ctx.lineTo(x + width * 0.3, centerY + arrowSize / 2);
+            ctx.closePath();
+            break;
+        case 'right':
+            ctx.moveTo(x + width * 0.8, centerY);
+            ctx.lineTo(x + width * 0.7, centerY - arrowSize / 2);
+            ctx.lineTo(x + width * 0.7, centerY + arrowSize / 2);
+            ctx.closePath();
+            break;
+    }
+    
+    ctx.fill();
 }
 
 // 当脚本加载完成时执行初始化

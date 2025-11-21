@@ -23,10 +23,29 @@
         </div>
     </div>
     
+    <!-- 座位图弹窗 -->
+    <div id="seatMapModal" class="modal hidden">
+        <div class="modal-content seat-map-modal">
+            <div class="modal-header">
+                <h2>座位图</h2>
+                <button class="modal-close" id="closeSeatMapModal">&times;</button>
+            </div>
+            <div class="seat-map-body">
+                <div class="floor-tabs">
+                    <button class="floor-tab active" data-floor="2层">2层</button>
+                    <button class="floor-tab" data-floor="3层">3层</button>
+                </div>
+                <div class="seat-map-container">
+                    <canvas id="seatMapCanvas"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+    
     <div class="container">
         <div class="header-with-btn">
             <h1>宁博自习室价格计算器</h1>
-            <button id="priceListBtn" class="price-list-btn" title="查看价目表">价目表</button>
+            <button id="seatMapBtn" class="seat-map-btn" title="查看座位图">座位图</button>
         </div>
         
         <div class="form-group">
@@ -53,7 +72,8 @@
             <input type="date" id="endDate">
         </div>
 
-        <div class="form-group">
+        <div class="form-group button-group">
+            <button id="priceListBtn" class="price-list-btn" title="查看价目表">价目表</button>
             <button id="calculateBtn" class="btn-primary">计算价格</button>
         </div>
 
@@ -85,7 +105,7 @@
     <script>
         // 动态添加版本号参数防止缓存
         (function() {
-            const version = 'v0.0.5';
+            const version = 'v0.0.6';
             const versionParam = version.replace('v', '').replace(/\./g, '');
             const timestamp = new Date().getTime();
             

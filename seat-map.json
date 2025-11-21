@@ -1,0 +1,277 @@
+{
+    "baseUnit": {
+        "width": 80,
+        "height": 60
+    },
+    "seatTypeSizes": {
+        "大厅": {
+            "unitWidth": 1,
+            "unitHeight": 1
+        },
+        "VIP单间": {
+            "unitWidth": 3,
+            "unitHeight": 1
+        }
+    },
+    "floors": {
+        "2层": {
+            "name": "2层",
+            "unitWidth": 4,
+            "unitHeight": 12,
+            "seats": [
+                {
+                    "name": "12",
+                    "unitX": 0,
+                    "unitY": 0,
+                    "direction": "down",
+                    "type": "大厅"
+                },
+                {
+                    "name": "11",
+                    "unitX": 1,
+                    "unitY": 0,
+                    "direction": "down",
+                    "type": "大厅"
+                },
+                {
+                    "name": "10",
+                    "unitX": 3,
+                    "unitY": 0,
+                    "direction": "down",
+                    "type": "大厅"
+                },
+                {
+                    "name": "14",
+                    "unitX": 0,
+                    "unitY": 1,
+                    "direction": "up",
+                    "type": "大厅"
+                },
+                {
+                    "name": "13",
+                    "unitX": 1,
+                    "unitY": 1,
+                    "direction": "up",
+                    "type": "大厅"
+                },
+                {
+                    "name": "09",
+                    "unitX": 3,
+                    "unitY": 1,
+                    "direction": "up",
+                    "type": "大厅"
+                },
+                {
+                    "name": "16",
+                    "unitX": 0,
+                    "unitY": 3,
+                    "direction": "down",
+                    "type": "大厅"
+                },
+                {
+                    "name": "15",
+                    "unitX": 1,
+                    "unitY": 3,
+                    "direction": "down",
+                    "type": "大厅"
+                },
+                {
+                    "name": "08",
+                    "unitX": 3,
+                    "unitY": 3,
+                    "direction": "down",
+                    "type": "大厅"
+                },
+                {
+                    "name": "18",
+                    "unitX": 0,
+                    "unitY": 4,
+                    "direction": "up",
+                    "type": "大厅"
+                },
+                {
+                    "name": "17",
+                    "unitX": 1,
+                    "unitY": 4,
+                    "direction": "up",
+                    "type": "大厅"
+                },
+                {
+                    "name": "07",
+                    "unitX": 3,
+                    "unitY": 4,
+                    "direction": "up",
+                    "type": "大厅"
+                },
+                {
+                    "name": "03",
+                    "unitX": 0,
+                    "unitY": 6,
+                    "direction": "down",
+                    "type": "大厅"
+                },
+                {
+                    "name": "01",
+                    "unitX": 1,
+                    "unitY": 6,
+                    "direction": "down",
+                    "type": "大厅"
+                },
+                {
+                    "name": "06",
+                    "unitX": 3,
+                    "unitY": 6,
+                    "direction": "down",
+                    "type": "大厅"
+                },
+                {
+                    "name": "04",
+                    "unitX": 0,
+                    "unitY": 7,
+                    "direction": "up",
+                    "type": "大厅"
+                },
+                {
+                    "name": "02",
+                    "unitX": 1,
+                    "unitY": 7,
+                    "direction": "up",
+                    "type": "大厅"
+                },
+                {
+                    "name": "05",
+                    "unitX": 3,
+                    "unitY": 7,
+                    "direction": "up",
+                    "type": "大厅"
+                },
+                {
+                    "name": "28",
+                    "unitX": 0,
+                    "unitY": 9,
+                    "direction": "down",
+                    "type": "大厅"
+                },
+                {
+                    "name": "29",
+                    "unitX": 1,
+                    "unitY": 9,
+                    "direction": "down",
+                    "type": "大厅"
+                },
+                {
+                    "name": "30",
+                    "unitX": 2,
+                    "unitY": 9,
+                    "direction": "down",
+                    "type": "大厅"
+                },
+                {
+                    "name": "[V5] 31-32",
+                    "unitX": 0,
+                    "unitY": 10,
+                    "direction": "up",
+                    "type": "VIP单间"
+                }
+            ]
+        },
+        "3层": {
+            "name": "3层",
+            "unitWidth": 4,
+            "unitHeight": 9,
+            "seats": [
+                {
+                    "name": "27",
+                    "unitX": 0,
+                    "unitY": 0,
+                    "direction": "right",
+                    "type": "大厅"
+                },
+                {
+                    "name": "24",
+                    "unitX": 1,
+                    "unitY": 0,
+                    "direction": "left",
+                    "type": "大厅"
+                },
+                {
+                    "name": "23",
+                    "unitX": 3,
+                    "unitY": 0,
+                    "direction": "down",
+                    "type": "大厅"
+                },
+                {
+                    "name": "26",
+                    "unitX": 0,
+                    "unitY": 1,
+                    "direction": "right",
+                    "type": "大厅"
+                },
+                {
+                    "name": "25",
+                    "unitX": 1,
+                    "unitY": 1,
+                    "direction": "left",
+                    "type": "大厅"
+                },
+                {
+                    "name": "22",
+                    "unitX": 3,
+                    "unitY": 1,
+                    "direction": "up",
+                    "type": "大厅"
+                },
+                {
+                    "name": "21",
+                    "unitX": 0,
+                    "unitY": 3,
+                    "direction": "down",
+                    "type": "大厅"
+                },
+                {
+                    "name": "20",
+                    "unitX": 1,
+                    "unitY": 3,
+                    "direction": "down",
+                    "type": "大厅"
+                },
+                {
+                    "name": "19",
+                    "unitX": 2,
+                    "unitY": 3,
+                    "direction": "down",
+                    "type": "大厅"
+                },
+                {
+                    "name": "[V4] 33-34",
+                    "unitX": 0,
+                    "unitY": 4,
+                    "direction": "up",
+                    "type": "VIP单间"
+                },
+                {
+                    "name": "[V3]",
+                    "unitX": 0,
+                    "unitY": 5,
+                    "direction": "up",
+                    "type": "VIP单间"
+                },
+                {
+                    "name": "[V2]",
+                    "unitX": 0,
+                    "unitY": 6,
+                    "direction": "up",
+                    "type": "VIP单间"
+                },
+                {
+                    "name": "[V1]",
+                    "unitX": 0,
+                    "unitY": 7,
+                    "direction": "up",
+                    "type": "VIP单间"
+                }
+            ]
+        }
+    }
+}
