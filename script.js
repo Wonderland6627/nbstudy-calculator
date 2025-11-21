@@ -4,7 +4,7 @@ let seatTypes = {};
 let durationTypes = {};
 
 // 版本号 - 每次部署时更新此版本号
-const APP_VERSION = 'v0.0.2';
+const APP_VERSION = 'v0.0.3';
 
 // 加载配置文件
 async function loadConfig() {
@@ -120,31 +120,46 @@ function calculatePrice() {
     // 获取时长类型对应的天数
     const durationDays = durationConfig.days;
     
+    // 计算每天单价
+    const dailyPrice = fixedPrice / durationDays;
+    
     // 计算价格
     let totalPrice = fixedPrice;
     let extraDays = 0;
     let extraPrice = 0;
     let hasExtra = false;
+    let hasLess = false;
+    let lessDays = 0;
     
+    // 如果实际天数少于时长类型对应的天数，按每天单价计算
+    if (diffDays < durationDays) {
+        hasLess = true;
+        lessDays = durationDays - diffDays;
+        // 按每天单价计算：固定价格 / 周期天数 * 实际天数
+        totalPrice = Math.round(dailyPrice * diffDays * 100) / 100;
+    }
     // 如果实际天数超过时长类型对应的天数，计算超出部分
-    if (diffDays > durationDays) {
+    else if (diffDays > durationDays) {
         hasExtra = true;
         extraDays = diffDays - durationDays;
         // 按原周期单价计算超出部分：固定价格 / 周期天数 * 超出天数
-        const dailyPrice = fixedPrice / durationDays;
         extraPrice = Math.round(dailyPrice * extraDays * 100) / 100; // 保留两位小数
         totalPrice = Math.round((fixedPrice + extraPrice) * 100) / 100;
     }
+    // 如果实际天数等于套餐天数，使用固定价格
+    else {
+        totalPrice = fixedPrice;
+    }
     
-    // 计算每天单价（用于显示）
-    const dailyPrice = hasExtra ? Math.round((fixedPrice / durationDays) * 100) / 100 : 0;
+    // 计算每天单价（用于显示，保留两位小数）
+    const dailyPriceDisplay = Math.round(dailyPrice * 100) / 100;
     
     // 显示结果
-    displayResult(seatType, durationType, startDate, endDate, diffDays, totalPrice, fixedPrice, durationDays, hasExtra, extraDays, extraPrice, dailyPrice);
+    displayResult(seatType, durationType, startDate, endDate, diffDays, totalPrice, fixedPrice, durationDays, hasExtra, extraDays, extraPrice, dailyPriceDisplay, hasLess, lessDays);
 }
 
 // 显示计算结果
-function displayResult(seatType, durationType, startDate, endDate, days, price, basePrice, durationDays, hasExtra, extraDays, extraPrice, dailyPrice) {
+function displayResult(seatType, durationType, startDate, endDate, days, price, basePrice, durationDays, hasExtra, extraDays, extraPrice, dailyPrice, hasLess, lessDays) {
     document.getElementById('resultSeatType').textContent = seatTypes[seatType].name;
     document.getElementById('resultDurationType').textContent = durationTypes[durationType].name;
     document.getElementById('resultStartDate').textContent = formatDate(startDate);
@@ -152,18 +167,38 @@ function displayResult(seatType, durationType, startDate, endDate, days, price, 
     document.getElementById('resultDays').textContent = days;
     document.getElementById('resultPrice').textContent = price.toLocaleString('zh-CN', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
     
-    // 显示费用明细（如果有超出）
+    // 显示费用明细
     const priceDetailDiv = document.getElementById('priceDetail');
-    if (hasExtra) {
-        const durationName = durationTypes[durationType].name;
+    const basePeriodItem = document.getElementById('basePeriodItem');
+    const extraDaysItem = document.getElementById('extraDaysItem');
+    const lessDaysItem = document.getElementById('lessDaysItem');
+    const durationName = durationTypes[durationType].name;
+    
+    // 隐藏所有明细项
+    basePeriodItem.style.display = 'none';
+    extraDaysItem.style.display = 'none';
+    lessDaysItem.style.display = 'none';
+    
+    if (hasLess) {
+        // 实际天数少于套餐天数
+        document.getElementById('actualDays').textContent = days;
+        document.getElementById('lessDurationName').textContent = durationName;
+        document.getElementById('lessDailyPrice').textContent = dailyPrice.toLocaleString('zh-CN', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+        lessDaysItem.style.display = 'block';
+        priceDetailDiv.classList.remove('hidden');
+    } else if (hasExtra) {
+        // 实际天数超过套餐天数
         document.getElementById('basePeriodName').textContent = durationName;
         document.getElementById('basePeriodPrice').textContent = `${basePrice.toLocaleString('zh-CN')} 元`;
         document.getElementById('extraDays').textContent = extraDays;
         document.getElementById('extraDaysPrice').textContent = `${extraPrice.toLocaleString('zh-CN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })} 元`;
         document.getElementById('extraDurationName').textContent = durationName;
         document.getElementById('dailyPrice').textContent = dailyPrice.toLocaleString('zh-CN', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+        basePeriodItem.style.display = 'block';
+        extraDaysItem.style.display = 'block';
         priceDetailDiv.classList.remove('hidden');
     } else {
+        // 实际天数等于套餐天数，不显示明细
         priceDetailDiv.classList.add('hidden');
     }
     
