@@ -467,6 +467,9 @@ function renderSeatMap(floor) {
     
     const ctx = canvas.getContext('2d');
     
+    // 获取设备像素比（处理高DPI屏幕）
+    const dpr = window.devicePixelRatio || 1;
+    
     // 计算画布实际尺寸（基于基础单位）
     const canvasWidth = floorData.unitWidth * baseUnit.width;
     const canvasHeight = floorData.unitHeight * baseUnit.height;
@@ -476,18 +479,28 @@ function renderSeatMap(floor) {
     const maxHeight = window.innerHeight * 0.7;
     const scale = Math.min(1, maxWidth / canvasWidth, maxHeight / canvasHeight);
     
-    canvas.width = canvasWidth * scale;
-    canvas.height = canvasHeight * scale;
+    // 设置CSS尺寸（显示尺寸）
+    const displayWidth = canvasWidth * scale;
+    const displayHeight = canvasHeight * scale;
+    canvas.style.width = displayWidth + 'px';
+    canvas.style.height = displayHeight + 'px';
     
-    // 清空画布
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    // 设置实际像素尺寸（考虑设备像素比，提高清晰度）
+    canvas.width = displayWidth * dpr;
+    canvas.height = displayHeight * dpr;
+    
+    // 缩放context以匹配设备像素比
+    ctx.scale(dpr, dpr);
+    
+    // 清空画布（使用显示尺寸，因为context已经缩放）
+    ctx.clearRect(0, 0, displayWidth, displayHeight);
     
     // 绘制背景
     ctx.fillStyle = '#ffffff';
-    ctx.fillRect(0, 0, canvas.width, canvas.height);
+    ctx.fillRect(0, 0, displayWidth, displayHeight);
     
     // 绘制网格线（可选，帮助查看基础单位）
-    drawGrid(ctx, canvas.width, canvas.height, floorData.unitWidth, floorData.unitHeight, baseUnit.width * scale, baseUnit.height * scale);
+    drawGrid(ctx, displayWidth, displayHeight, floorData.unitWidth, floorData.unitHeight, baseUnit.width * scale, baseUnit.height * scale);
     
     // 绘制座位
     floorData.seats.forEach(seat => {
