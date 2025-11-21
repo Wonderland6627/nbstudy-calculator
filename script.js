@@ -4,7 +4,7 @@ let seatTypes = {};
 let durationTypes = {};
 
 // 版本号 - 每次部署时更新此版本号
-const APP_VERSION = 'v0.0.4';
+const APP_VERSION = 'v0.0.5';
 
 // 加载配置文件
 async function loadConfig() {
@@ -322,8 +322,8 @@ function closePriceListModal() {
     document.body.style.overflow = ''; // 恢复滚动
 }
 
-// 事件监听
-document.addEventListener('DOMContentLoaded', () => {
+// 初始化应用
+function initApp() {
     // 初始化版本号
     initVersion();
     
@@ -365,5 +365,14 @@ document.addEventListener('DOMContentLoaded', () => {
             closePriceListModal();
         }
     });
-});
+}
+
+// 当脚本加载完成时执行初始化
+// 由于脚本是动态加载的，DOM肯定已经准备好了
+if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initApp);
+} else {
+    // DOM已经加载完成，直接执行
+    initApp();
+}
 
