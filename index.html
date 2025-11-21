@@ -3,8 +3,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+    <meta http-equiv="Pragma" content="no-cache">
+    <meta http-equiv="Expires" content="0">
     <title>宁博自习室价格计算器</title>
-    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="style.css" id="styleLink">
 </head>
 <body>
     <!-- 价目表弹窗 -->
@@ -79,7 +82,25 @@
         </div>
     </div>
 
-    <script src="script.js"></script>
+    <script>
+        // 动态添加版本号参数防止缓存
+        (function() {
+            const version = 'v0.0.4';
+            const versionParam = version.replace('v', '').replace(/\./g, '');
+            const timestamp = new Date().getTime();
+            
+            // 更新 CSS 链接
+            const styleLink = document.getElementById('styleLink');
+            if (styleLink) {
+                styleLink.href = `style.css?v=${versionParam}&t=${timestamp}`;
+            }
+            
+            // 动态加载 JS
+            const script = document.createElement('script');
+            script.src = `script.js?v=${versionParam}&t=${timestamp}`;
+            document.body.appendChild(script);
+        })();
+    </script>
 </body>
 </html>
 

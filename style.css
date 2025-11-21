@@ -35,6 +35,18 @@ h1 {
     margin: 0;
     font-size: 24px;
     flex: 1;
+    /* 使用绝对居中，左右各留出按钮空间 */
+    position: relative;
+}
+
+/* 为移动端标题添加左右占位，确保真正居中 */
+@media (max-width: 480px) {
+    h1::before,
+    h1::after {
+        content: '';
+        display: inline-block;
+        width: 70px;
+    }
 }
 
 .form-group {
@@ -398,30 +410,34 @@ input[type="date"]:focus {
     }
     
     .header-with-btn {
-        flex-direction: column;
-        gap: 15px;
+        /* 保持行布局，不改为列布局 */
+        gap: 10px;
     }
     
     h1 {
-        font-size: 20px;
+        font-size: 18px;
+        /* 移除 padding，使用伪元素占位 */
+        padding: 0;
     }
     
     .price-list-btn {
-        position: relative;
-        right: auto;
-        top: auto;
-        transform: none;
-        padding: 8px 14px;
-        font-size: 12px;
-        width: 100%;
+        /* 保持绝对定位，在右侧 */
+        position: absolute;
+        right: 0;
+        top: 50%;
+        transform: translateY(-50%);
+        padding: 6px 12px;
+        font-size: 11px;
+        width: auto;
+        min-width: 60px;
     }
     
     .price-list-btn:hover {
-        transform: translateY(-1px);
+        transform: translateY(-50%) translateY(-1px);
     }
     
     .price-list-btn:active {
-        transform: translateY(0);
+        transform: translateY(-50%);
     }
     
     .modal-content {

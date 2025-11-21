@@ -4,12 +4,24 @@ let seatTypes = {};
 let durationTypes = {};
 
 // 版本号 - 每次部署时更新此版本号
-const APP_VERSION = 'v0.0.3';
+const APP_VERSION = 'v0.0.4';
 
 // 加载配置文件
 async function loadConfig() {
     try {
-        const response = await fetch('config.json');
+        // 添加时间戳和版本号参数防止缓存
+        const timestamp = new Date().getTime();
+        const version = APP_VERSION.replace('v', '').replace(/\./g, '');
+        const url = `config.json?v=${version}&t=${timestamp}`;
+        
+        const response = await fetch(url, {
+            cache: 'no-cache',
+            headers: {
+                'Cache-Control': 'no-cache',
+                'Pragma': 'no-cache'
+            }
+        });
+        
         config = await response.json();
         seatTypes = config.seatTypes;
         durationTypes = config.durationTypes;
