@@ -543,18 +543,20 @@ input[type="date"]:focus {
     }
     
     .button-group {
-        flex-direction: column;
-        gap: 10px;
+        /* 保持水平排列 */
+        gap: 8px;
     }
     
     .price-list-btn {
-        width: 100%;
-        padding: 12px;
-        font-size: 16px;
+        flex: 0 0 calc(25% - 4px);
+        padding: 12px 8px;
+        font-size: 14px;
     }
     
     .btn-primary {
-        width: 100%;
+        flex: 0 0 calc(75% - 4px);
+        padding: 12px;
+        font-size: 16px;
     }
     
     .seat-map-modal {
