@@ -131,6 +131,35 @@ input[type="date"]:focus {
     font-size: 24px;
 }
 
+.price-detail {
+    margin-top: 15px;
+    padding: 15px;
+    background: #f8f9fa;
+    border-radius: 8px;
+    border-left: 3px solid #667eea;
+}
+
+.price-detail.hidden {
+    display: none;
+}
+
+.price-detail p {
+    margin-bottom: 8px;
+    font-size: 13px;
+    color: #666;
+}
+
+.price-detail p:first-child {
+    font-weight: 600;
+    color: #555;
+    margin-bottom: 10px;
+}
+
+.detail-item {
+    margin-left: 10px;
+    color: #666;
+}
+
 .version-info {
     margin-top: 30px;
     padding-top: 20px;

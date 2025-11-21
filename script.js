@@ -4,7 +4,7 @@ let seatTypes = {};
 let durationTypes = {};
 
 // 版本号 - 每次部署时更新此版本号
-const APP_VERSION = 'v0.0.1';
+const APP_VERSION = 'v0.0.2';
 
 // 加载配置文件
 async function loadConfig() {
@@ -114,21 +114,55 @@ function calculatePrice() {
         return;
     }
     
-    // 使用固定价格
-    const totalPrice = fixedPrice;
+    // 获取时长类型对应的天数
+    const durationDays = durationConfig.days;
+    
+    // 计算价格
+    let totalPrice = fixedPrice;
+    let extraDays = 0;
+    let extraPrice = 0;
+    let hasExtra = false;
+    
+    // 如果实际天数超过时长类型对应的天数，计算超出部分
+    if (diffDays > durationDays) {
+        hasExtra = true;
+        extraDays = diffDays - durationDays;
+        // 按原周期单价计算超出部分：固定价格 / 周期天数 * 超出天数
+        const dailyPrice = fixedPrice / durationDays;
+        extraPrice = Math.round(dailyPrice * extraDays * 100) / 100; // 保留两位小数
+        totalPrice = Math.round((fixedPrice + extraPrice) * 100) / 100;
+    }
+    
+    // 计算每天单价（用于显示）
+    const dailyPrice = hasExtra ? Math.round((fixedPrice / durationDays) * 100) / 100 : 0;
     
     // 显示结果
-    displayResult(seatType, durationType, startDate, endDate, diffDays, totalPrice);
+    displayResult(seatType, durationType, startDate, endDate, diffDays, totalPrice, fixedPrice, durationDays, hasExtra, extraDays, extraPrice, dailyPrice);
 }
 
 // 显示计算结果
-function displayResult(seatType, durationType, startDate, endDate, days, price) {
+function displayResult(seatType, durationType, startDate, endDate, days, price, basePrice, durationDays, hasExtra, extraDays, extraPrice, dailyPrice) {
     document.getElementById('resultSeatType').textContent = seatTypes[seatType].name;
     document.getElementById('resultDurationType').textContent = durationTypes[durationType].name;
     document.getElementById('resultStartDate').textContent = formatDate(startDate);
     document.getElementById('resultEndDate').textContent = formatDate(endDate);
     document.getElementById('resultDays').textContent = days;
-    document.getElementById('resultPrice').textContent = price.toLocaleString();
+    document.getElementById('resultPrice').textContent = price.toLocaleString('zh-CN', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+    
+    // 显示费用明细（如果有超出）
+    const priceDetailDiv = document.getElementById('priceDetail');
+    if (hasExtra) {
+        const durationName = durationTypes[durationType].name;
+        document.getElementById('basePeriodName').textContent = durationName;
+        document.getElementById('basePeriodPrice').textContent = `${basePrice.toLocaleString('zh-CN')} 元`;
+        document.getElementById('extraDays').textContent = extraDays;
+        document.getElementById('extraDaysPrice').textContent = `${extraPrice.toLocaleString('zh-CN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })} 元`;
+        document.getElementById('extraDurationName').textContent = durationName;
+        document.getElementById('dailyPrice').textContent = dailyPrice.toLocaleString('zh-CN', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+        priceDetailDiv.classList.remove('hidden');
+    } else {
+        priceDetailDiv.classList.add('hidden');
+    }
     
     const resultDiv = document.getElementById('result');
     resultDiv.classList.remove('hidden');

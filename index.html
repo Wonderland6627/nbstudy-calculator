@@ -3,12 +3,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>自习室价格计算器</title>
+    <title>宁博自习室价格计算器</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
     <div class="container">
-        <h1>自习室价格计算器</h1>
+        <h1>宁博自习室价格计算器</h1>
         
         <div class="form-group">
             <label for="seatType">座位类型</label>
@@ -32,7 +32,6 @@
         <div class="form-group">
             <label for="endDate">结束日期</label>
             <input type="date" id="endDate">
-            <small class="hint">可根据时长类型自动计算，也可手动修改</small>
         </div>
 
         <div class="form-group">
@@ -47,6 +46,13 @@
                 <p><strong>起始日期：</strong><span id="resultStartDate"></span></p>
                 <p><strong>结束日期：</strong><span id="resultEndDate"></span></p>
                 <p><strong>总天数：</strong><span id="resultDays"></span> 天</p>
+                
+                <div id="priceDetail" class="price-detail hidden">
+                    <p><strong>费用明细：</strong></p>
+                    <p class="detail-item">• <span id="basePeriodPrice"></span>（<span id="basePeriodName"></span>）</p>
+                    <p class="detail-item">• <span id="extraDaysPrice"></span>（超出 <span id="extraDays"></span> 天，按照<span id="extraDurationName"></span>价格，每天 <span id="dailyPrice"></span> 元）</p>
+                </div>
+                
                 <p class="price"><strong>总价格：</strong><span id="resultPrice"></span> 元</p>
             </div>
         </div>
