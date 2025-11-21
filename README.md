@@ -18,6 +18,59 @@
 - `script.js` - 主要逻辑代码
 - `style.css` - 样式文件
 - `config.json` - 配置文件（可自定义价格）
+- `start-server.bat` - Windows 本地测试启动脚本
+- `start-server.sh` - Linux/Mac 本地测试启动脚本
+
+## 本地测试
+
+在推送到 GitHub Pages 之前，可以在本地测试网页：
+
+### 方法一：使用启动脚本（推荐）
+
+**Windows 用户：**
+双击 `start-server.bat` 文件，或在命令行运行：
+```bash
+start-server.bat
+```
+
+**Linux/Mac 用户：**
+```bash
+chmod +x start-server.sh
+./start-server.sh
+```
+
+然后在浏览器中访问：`http://localhost:8000`
+
+### 方法二：使用 Python（如果已安装）
+
+在项目目录下运行：
+```bash
+python -m http.server 8000
+```
+或
+```bash
+python3 -m http.server 8000
+```
+
+然后在浏览器中访问：`http://localhost:8000`
+
+### 方法三：使用 Node.js（如果已安装）
+
+如果安装了 `http-server`：
+```bash
+npx http-server -p 8000
+```
+
+如果没有安装，先安装：
+```bash
+npm install -g http-server
+```
+
+### 停止服务器
+
+在运行服务器的终端窗口按 `Ctrl+C` 即可停止服务器。
+
+**注意**：由于使用了 `fetch()` 加载 `config.json`，直接双击打开 HTML 文件可能会遇到 CORS 限制，必须通过 HTTP 服务器访问。
 
 ## 配置文件说明
 
