@@ -3,6 +3,9 @@ let config = {};
 let seatTypes = {};
 let durationTypes = {};
 
+// 版本号 - 每次部署时更新此版本号
+const APP_VERSION = 'v0.0.1';
+
 // 加载配置文件
 async function loadConfig() {
     try {
@@ -143,8 +146,19 @@ function formatDate(dateStr) {
     return `${year}-${month}-${day}`;
 }
 
+// 初始化版本号显示
+function initVersion() {
+    const versionElement = document.getElementById('version');
+    if (versionElement) {
+        versionElement.textContent = APP_VERSION;
+    }
+}
+
 // 事件监听
 document.addEventListener('DOMContentLoaded', () => {
+    // 初始化版本号
+    initVersion();
+    
     loadConfig();
     
     // 时长类型变化时自动计算结束日期
