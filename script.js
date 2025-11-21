@@ -94,7 +94,7 @@ function calculatePrice() {
     const diffTime = Math.abs(end - start);
     const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
     
-    // 获取基础价格和折扣
+    // 获取座位类型和时长类型配置
     const seatConfig = seatTypes[seatType];
     const durationConfig = durationTypes[durationType];
     
@@ -103,10 +103,16 @@ function calculatePrice() {
         return;
     }
     
-    // 计算价格：基础价格 * 天数 * 折扣
-    const basePrice = seatConfig.basePrice;
-    const discount = durationConfig.discount || 1;
-    const totalPrice = Math.round(basePrice * diffDays * discount);
+    // 获取固定价格
+    const fixedPrice = seatConfig.prices && seatConfig.prices[durationType];
+    
+    if (fixedPrice === undefined) {
+        alert('未找到对应的价格配置，请检查配置文件');
+        return;
+    }
+    
+    // 使用固定价格
+    const totalPrice = fixedPrice;
     
     // 显示结果
     displayResult(seatType, durationType, startDate, endDate, diffDays, totalPrice);
