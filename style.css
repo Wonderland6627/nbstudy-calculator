@@ -10,7 +10,10 @@ body {
     min-height: 100vh;
     padding: 20px;
     color: #333;
+    position: relative;
 }
+
+/* 水印样式 - 由JavaScript动态创建 */
 
 .container {
     max-width: 500px;
@@ -19,6 +22,21 @@ body {
     border-radius: 20px;
     padding: 30px 20px;
     box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+    position: relative;
+    z-index: 2;
+    overflow: hidden; /* 确保水印不会溢出容器 */
+}
+
+/* 确保容器内的所有内容都在水印之上 */
+.container > *:not(#container-watermark) {
+    position: relative;
+    z-index: 1;
+}
+
+/* 确保结果容器内的所有内容都在水印之上 */
+.result > *:not(#result-watermark) {
+    position: relative;
+    z-index: 1;
 }
 
 .header-with-btn {
@@ -120,6 +138,8 @@ input[type="date"]:focus {
     background: #f8f9fa;
     border-radius: 15px;
     border: 2px solid #e0e0e0;
+    position: relative;
+    overflow: hidden; /* 确保水印不会溢出容器 */
 }
 
 .result.hidden {
@@ -281,6 +301,11 @@ input[type="date"]:focus {
     display: none;
 }
 
+.modal-content {
+    position: relative;
+    z-index: 2;
+}
+
 @keyframes fadeIn {
     from {
         opacity: 0;
@@ -299,6 +324,7 @@ input[type="date"]:focus {
     overflow: hidden;
     box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
     animation: slideUp 0.3s;
+    position: relative;
 }
 
 /* 座位图弹窗 - 更大尺寸 */
@@ -326,6 +352,8 @@ input[type="date"]:focus {
     align-items: center;
     background: linear-gradient(135deg, #ff8c42 0%, #ffa366 100%);
     color: white;
+    position: relative;
+    z-index: 1;
 }
 
 .modal-header h2 {
@@ -358,6 +386,8 @@ input[type="date"]:focus {
     padding: 20px;
     overflow-y: auto;
     max-height: calc(80vh - 80px);
+    position: relative;
+    z-index: 1;
 }
 
 /* 价目表样式 */
@@ -380,7 +410,7 @@ input[type="date"]:focus {
 }
 
 .price-table th {
-    background: #f8f9fa;
+    background: rgba(248, 249, 250, 0.5);
     font-weight: 600;
     color: #ff8c42;
     position: sticky;
@@ -389,7 +419,7 @@ input[type="date"]:focus {
 }
 
 .price-table th.seat-header {
-    background: linear-gradient(135deg, #ff8c42 0%, #ffa366 100%);
+    background: linear-gradient(135deg, rgba(255, 140, 66, 0.5) 0%, rgba(255, 163, 102, 0.5) 100%);
     color: white;
 }
 
@@ -398,20 +428,28 @@ input[type="date"]:focus {
 }
 
 .price-table tr:hover {
-    background: #f8f9fa;
+    background: rgba(248, 249, 250, 0.4);
 }
 
 .price-table .duration-type {
     font-weight: 600;
     color: #555;
     text-align: left;
-    background: #f8f9fa;
+    background: rgba(248, 249, 250, 0.5);
 }
 
 .price-table .price {
     font-weight: 600;
     color: #ff7a33;
     text-align: center;
+}
+
+/* 特殊价格行样式 */
+.price-table .special-price-row .price {
+    font-size: 13px;
+    line-height: 1.4;
+    white-space: normal;
+    word-break: break-word;
 }
 
 /* 座位图样式 */

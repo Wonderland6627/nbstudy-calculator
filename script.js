@@ -6,7 +6,7 @@ let seatMapConfig = {};
 let currentFloor = '2层';
 
 // 版本号 - 每次部署时更新此版本号
-const APP_VERSION = 'v0.0.7';
+const APP_VERSION = 'v0.0.8';
 
 // 加载配置文件
 async function loadConfig() {
@@ -244,6 +244,9 @@ function displayResult(seatType, durationType, startDate, endDate, days, price, 
     const resultDiv = document.getElementById('result');
     resultDiv.classList.remove('hidden');
     
+    // 为结果容器创建水印
+    createResultWatermark();
+    
     // 滚动到结果区域
     resultDiv.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
 }
@@ -329,6 +332,33 @@ function generatePriceTable() {
         tbody.appendChild(row);
     });
     
+    // 在年卡行下面添加次卡特殊行
+    const specialRow = document.createElement('tr');
+    specialRow.className = 'special-price-row';
+    
+    // 第一列：次卡
+    const specialDurationCell = document.createElement('td');
+    specialDurationCell.className = 'duration-type';
+    specialDurationCell.textContent = '次卡';
+    specialRow.appendChild(specialDurationCell);
+    
+    // 后续列：根据座位类型显示内容
+    seatKeys.forEach(seatKey => {
+        const priceCell = document.createElement('td');
+        priceCell.className = 'price';
+        if (seatKey === '大厅') {
+            // 大厅列显示次卡价格信息（两行显示）
+            priceCell.innerHTML = '180元/10次<br>（无固定座位）';
+            priceCell.style.fontSize = '13px';
+        } else {
+            // 其他列显示"-"
+            priceCell.textContent = '-';
+        }
+        specialRow.appendChild(priceCell);
+    });
+    
+    tbody.appendChild(specialRow);
+    
     table.appendChild(tbody);
     tableContainer.innerHTML = '';
     tableContainer.appendChild(table);
@@ -340,6 +370,8 @@ function openPriceListModal() {
     const modal = document.getElementById('priceListModal');
     modal.classList.remove('hidden');
     document.body.style.overflow = 'hidden'; // 防止背景滚动
+    // 为价目表弹窗创建水印
+    createPriceModalWatermark();
 }
 
 // 关闭价目表弹窗
@@ -347,12 +379,228 @@ function closePriceListModal() {
     const modal = document.getElementById('priceListModal');
     modal.classList.add('hidden');
     document.body.style.overflow = ''; // 恢复滚动
+    // 移除价目表弹窗水印
+    const priceModalWatermark = document.getElementById('price-modal-watermark');
+    if (priceModalWatermark) {
+        priceModalWatermark.remove();
+    }
+}
+
+// 创建水印
+function createWatermark() {
+    // 在白色容器内创建水印（灰色，用于白色背景）
+    createContainerWatermark();
+    
+    // 窗口大小改变时重新创建水印
+    let resizeTimer;
+    window.addEventListener('resize', () => {
+        clearTimeout(resizeTimer);
+        resizeTimer = setTimeout(() => {
+            const containerWatermark = document.getElementById('container-watermark');
+            if (containerWatermark) {
+                containerWatermark.remove();
+            }
+            createContainerWatermark();
+        }, 300);
+    });
+}
+
+// 在白色容器内创建水印
+function createContainerWatermark() {
+    const container = document.querySelector('.container');
+    if (!container) {
+        // 如果容器还没加载，延迟执行
+        setTimeout(createContainerWatermark, 100);
+        return;
+    }
+    
+    // 检查是否已存在容器水印
+    let containerWatermark = document.getElementById('container-watermark');
+    if (containerWatermark) {
+        return;
+    }
+    
+    // 创建容器水印
+    containerWatermark = document.createElement('div');
+    containerWatermark.id = 'container-watermark';
+    containerWatermark.style.cssText = `
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        pointer-events: none;
+        z-index: 0;
+        overflow: hidden;
+        border-radius: 20px;
+    `;
+    
+    // 获取容器尺寸（使用offsetWidth和offsetHeight更可靠）
+    const containerWidth = container.offsetWidth || container.clientWidth;
+    const containerHeight = container.offsetHeight || container.clientHeight;
+    const watermarkWidth = 300;
+    const watermarkHeight = 200;
+    const cols = Math.ceil(containerWidth / watermarkWidth) + 1;
+    const rows = Math.ceil(containerHeight / watermarkHeight) + 1;
+    
+    // 创建容器内的水印元素（灰色，用于白色背景）
+    for (let row = 0; row < rows; row++) {
+        for (let col = 0; col < cols; col++) {
+            const watermark = document.createElement('div');
+            watermark.textContent = '宁博自习室';
+            watermark.style.cssText = `
+                position: absolute;
+                top: ${row * watermarkHeight}px;
+                left: ${col * watermarkWidth}px;
+                font-size: 40px;
+                color: rgba(0, 0, 0, 0.05);
+                font-weight: 300;
+                letter-spacing: 15px;
+                transform: rotate(-25deg);
+                white-space: nowrap;
+                user-select: none;
+            `;
+            containerWatermark.appendChild(watermark);
+        }
+    }
+    
+    // 将水印插入到容器的第一个位置
+    container.insertBefore(containerWatermark, container.firstChild);
+}
+
+// 在价目表弹窗内创建水印
+function createPriceModalWatermark() {
+    const modalContent = document.querySelector('#priceListModal .modal-content');
+    if (!modalContent) {
+        // 如果弹窗还没加载，延迟执行
+        setTimeout(createPriceModalWatermark, 100);
+        return;
+    }
+    
+    // 检查是否已存在价目表弹窗水印
+    let priceModalWatermark = document.getElementById('price-modal-watermark');
+    if (priceModalWatermark) {
+        // 如果已存在，先移除再重新创建（因为弹窗大小可能变化）
+        priceModalWatermark.remove();
+    }
+    
+    // 创建价目表弹窗水印
+    priceModalWatermark = document.createElement('div');
+    priceModalWatermark.id = 'price-modal-watermark';
+    priceModalWatermark.style.cssText = `
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        pointer-events: none;
+        z-index: 0;
+        overflow: hidden;
+        border-radius: 20px;
+    `;
+    
+    // 获取弹窗内容区域尺寸
+    const modalWidth = modalContent.offsetWidth || modalContent.clientWidth;
+    const modalHeight = modalContent.offsetHeight || modalContent.clientHeight;
+    const watermarkWidth = 300;
+    const watermarkHeight = 200;
+    const cols = Math.ceil(modalWidth / watermarkWidth) + 1;
+    const rows = Math.ceil(modalHeight / watermarkHeight) + 1;
+    
+    // 创建价目表弹窗内的水印元素（灰色，用于白色背景）
+    for (let row = 0; row < rows; row++) {
+        for (let col = 0; col < cols; col++) {
+            const watermark = document.createElement('div');
+            watermark.textContent = '宁博自习室';
+            watermark.style.cssText = `
+                position: absolute;
+                top: ${row * watermarkHeight}px;
+                left: ${col * watermarkWidth}px;
+                font-size: 40px;
+                color: rgba(0, 0, 0, 0.05);
+                font-weight: 300;
+                letter-spacing: 15px;
+                transform: rotate(-25deg);
+                white-space: nowrap;
+                user-select: none;
+            `;
+            priceModalWatermark.appendChild(watermark);
+        }
+    }
+    
+    // 将水印插入到弹窗内容的第一个位置
+    modalContent.insertBefore(priceModalWatermark, modalContent.firstChild);
+}
+
+// 在计算结果容器内创建水印
+function createResultWatermark() {
+    const resultDiv = document.getElementById('result');
+    if (!resultDiv) {
+        return;
+    }
+    
+    // 检查是否已存在结果水印
+    let resultWatermark = document.getElementById('result-watermark');
+    if (resultWatermark) {
+        // 如果已存在，先移除再重新创建（因为容器大小可能变化）
+        resultWatermark.remove();
+    }
+    
+    // 创建结果容器水印
+    resultWatermark = document.createElement('div');
+    resultWatermark.id = 'result-watermark';
+    resultWatermark.style.cssText = `
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        pointer-events: none;
+        z-index: 0;
+        overflow: hidden;
+        border-radius: 15px;
+    `;
+    
+    // 获取结果容器尺寸
+    const resultWidth = resultDiv.offsetWidth || resultDiv.clientWidth;
+    const resultHeight = resultDiv.offsetHeight || resultDiv.clientHeight;
+    const watermarkWidth = 300;
+    const watermarkHeight = 200;
+    const cols = Math.ceil(resultWidth / watermarkWidth) + 1;
+    const rows = Math.ceil(resultHeight / watermarkHeight) + 1;
+    
+    // 创建结果容器内的水印元素（灰色，用于浅灰色背景）
+    for (let row = 0; row < rows; row++) {
+        for (let col = 0; col < cols; col++) {
+            const watermark = document.createElement('div');
+            watermark.textContent = '宁博自习室';
+            watermark.style.cssText = `
+                position: absolute;
+                top: ${row * watermarkHeight}px;
+                left: ${col * watermarkWidth}px;
+                font-size: 40px;
+                color: rgba(0, 0, 0, 0.04);
+                font-weight: 300;
+                letter-spacing: 15px;
+                transform: rotate(-25deg);
+                white-space: nowrap;
+                user-select: none;
+            `;
+            resultWatermark.appendChild(watermark);
+        }
+    }
+    
+    // 将水印插入到结果容器的第一个位置
+    resultDiv.insertBefore(resultWatermark, resultDiv.firstChild);
 }
 
 // 初始化应用
 function initApp() {
     // 初始化版本号
     initVersion();
+    
+    // 创建水印
+    createWatermark();
     
     loadConfig();
     
