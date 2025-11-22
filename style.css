@@ -76,6 +76,19 @@ h1 {
     margin-bottom: 25px;
 }
 
+/* 表单行布局 */
+.form-row {
+    display: flex;
+    gap: 15px;
+    align-items: flex-start;
+}
+
+.form-col {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+}
+
 label {
     display: block;
     margin-bottom: 8px;
@@ -163,6 +176,13 @@ input[type="date"]:focus {
     color: #555;
 }
 
+/* 退卡规则内的段落不受result-content p样式影响 */
+.refund-rule p {
+    margin-bottom: 0;
+    font-size: inherit;
+    color: inherit;
+}
+
 .result-content .price {
     margin-top: 15px;
     padding-top: 15px;
@@ -177,10 +197,45 @@ input[type="date"]:focus {
     font-size: 24px;
 }
 
+.refund-rule {
+    margin-top: 15px;
+    padding-top: 15px;
+    border-top: 1px solid #e0e0e0;
+    font-size: 11px;
+    color: #666;
+    line-height: 1.5;
+}
+
+.refund-rule > p:first-child {
+    margin-bottom: 4px;
+    font-size: 10px;
+}
+
+.refund-rule strong {
+    color: #555;
+    font-weight: 600;
+    font-size: 10px;
+}
+
+.refund-rule-content,
+.refund-rule-formula,
+.refund-rule-example {
+    margin: 3px 0;
+    padding-left: 12px;
+    font-size: 10px !important;
+    color: #666;
+    line-height: 1.5;
+}
+
+.refund-rule-example {
+    color: #888;
+    font-style: italic;
+}
+
 .price-detail {
     margin-top: 15px;
     padding: 15px;
-    background: #f8f9fa;
+    background: transparent;
     border-radius: 8px;
     border-left: 3px solid #ff8c42;
 }
@@ -394,6 +449,7 @@ input[type="date"]:focus {
 .price-table {
     width: 100%;
     border-collapse: collapse;
+    table-layout: fixed;
 }
 
 .price-table th,
@@ -402,6 +458,18 @@ input[type="date"]:focus {
     text-align: center;
     border-bottom: 1px solid #e0e0e0;
     border-right: 1px solid #e0e0e0;
+}
+
+/* 第一列（时长类型）固定宽度 */
+.price-table th:first-child,
+.price-table td:first-child {
+    width: 30%;
+}
+
+/* 座位类型列平均分配剩余宽度 */
+.price-table th.seat-header,
+.price-table td.price {
+    width: 35%;
 }
 
 .price-table th:last-child,
@@ -436,6 +504,13 @@ input[type="date"]:focus {
     color: #555;
     text-align: left;
     background: rgba(248, 249, 250, 0.5);
+    width: 25%;
+}
+
+/* 座位类型列宽度平均分配 */
+.price-table th.seat-header,
+.price-table td.price {
+    width: auto;
 }
 
 .price-table .price {
@@ -526,6 +601,15 @@ input[type="date"]:focus {
     
     .form-group {
         margin-bottom: 20px;
+    }
+    
+    /* 移动端表单行布局保持水平排列，但减小间距 */
+    .form-row {
+        gap: 10px;
+    }
+    
+    .form-col {
+        min-width: 0; /* 允许flex项目缩小 */
     }
     
     select,

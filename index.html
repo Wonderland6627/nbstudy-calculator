@@ -48,28 +48,30 @@
             <button id="seatMapBtn" class="seat-map-btn" title="查看座位图">座位图</button>
         </div>
         
-        <div class="form-group">
-            <label for="seatType">座位类型</label>
-            <select id="seatType">
-                <option value="">请选择座位类型</option>
-            </select>
+        <div class="form-group form-row">
+            <div class="form-col">
+                <label for="seatType">座位类型</label>
+                <select id="seatType">
+                    <option value="">请选择座位类型</option>
+                </select>
+            </div>
+            <div class="form-col">
+                <label for="durationType">时长类型</label>
+                <select id="durationType">
+                    <option value="">请选择时长类型</option>
+                </select>
+            </div>
         </div>
 
-        <div class="form-group">
-            <label for="durationType">时长类型</label>
-            <select id="durationType">
-                <option value="">请选择时长类型</option>
-            </select>
-        </div>
-
-        <div class="form-group">
-            <label for="startDate">起始日期</label>
-            <input type="date" id="startDate">
-        </div>
-
-        <div class="form-group">
-            <label for="endDate">结束日期</label>
-            <input type="date" id="endDate">
+        <div class="form-group form-row">
+            <div class="form-col">
+                <label for="startDate">起始日期</label>
+                <input type="date" id="startDate">
+            </div>
+            <div class="form-col">
+                <label for="endDate">结束日期</label>
+                <input type="date" id="endDate">
+            </div>
         </div>
 
         <div class="form-group button-group">
@@ -84,7 +86,7 @@
                 <p><strong>时长类型：</strong><span id="resultDurationType"></span></p>
                 <p><strong>起始日期：</strong><span id="resultStartDate"></span></p>
                 <p><strong>结束日期：</strong><span id="resultEndDate"></span></p>
-                <p><strong>总天数：</strong><span id="resultDays"></span> 天</p>
+                <p><strong>总天数：</strong><span id="resultDays"></span> 天<span id="resultDaysBreakdown"></span></p>
                 
                 <div id="priceDetail" class="price-detail hidden">
                     <p><strong>费用明细：</strong></p>
@@ -94,6 +96,12 @@
                 </div>
                 
                 <p class="price"><strong>总价格：</strong><span id="resultPrice"></span> 元</p>
+                <div class="refund-rule">
+                    <p><strong>退卡规则：</strong></p>
+                    <p class="refund-rule-content">按照实际使用天数，以最接近的时长类型（月卡、季卡、半年卡、年卡）的日均费用计算已使用费用，剩余金额将予以退还。</p>
+                    <p class="refund-rule-formula">已使用费用 = 对应时长类型的日均费用 × 实际使用天数。</p>
+                    <p class="refund-rule-example">例如：购买半年卡使用40天，按月卡日均费用×40计算；使用100天，则按季卡日均费用×100计算。</p>
+                </div>
             </div>
         </div>
 
@@ -105,7 +113,7 @@
     <script>
         // 动态添加版本号参数防止缓存
         (function() {
-            const version = 'v0.0.8';
+            const version = 'v0.0.9';
             const versionParam = version.replace('v', '').replace(/\./g, '');
             const timestamp = new Date().getTime();
             

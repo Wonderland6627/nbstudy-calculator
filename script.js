@@ -6,7 +6,7 @@ let seatMapConfig = {};
 let currentFloor = '2层';
 
 // 版本号 - 每次部署时更新此版本号
-const APP_VERSION = 'v0.0.8';
+const APP_VERSION = 'v0.0.9';
 
 // 加载配置文件
 async function loadConfig() {
@@ -204,6 +204,17 @@ function displayResult(seatType, durationType, startDate, endDate, days, price, 
     document.getElementById('resultStartDate').textContent = formatDate(startDate);
     document.getElementById('resultEndDate').textContent = formatDate(endDate);
     document.getElementById('resultDays').textContent = days;
+    
+    // 计算并显示每个月的天数累计
+    const monthlyDays = calculateMonthlyDays(startDate, endDate);
+    const daysBreakdownElement = document.getElementById('resultDaysBreakdown');
+    if (monthlyDays.length > 0) {
+        const breakdownText = `（${monthlyDays.join('+')}）`;
+        daysBreakdownElement.textContent = breakdownText;
+    } else {
+        daysBreakdownElement.textContent = '';
+    }
+    
     document.getElementById('resultPrice').textContent = price.toLocaleString('zh-CN', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
     
     // 显示费用明细
@@ -258,6 +269,52 @@ function formatDate(dateStr) {
     const month = String(date.getMonth() + 1).padStart(2, '0');
     const day = String(date.getDate()).padStart(2, '0');
     return `${year}-${month}-${day}`;
+}
+
+// 计算每个月的天数累计
+function calculateMonthlyDays(startDate, endDate) {
+    const start = new Date(startDate);
+    const end = new Date(endDate);
+    const monthlyDays = [];
+    
+    let current = new Date(start);
+    current.setHours(0, 0, 0, 0);
+    end.setHours(23, 59, 59, 999);
+    
+    while (current <= end) {
+        const year = current.getFullYear();
+        const month = current.getMonth();
+        
+        // 计算当前月的最后一天
+        const lastDay = new Date(year, month + 1, 0);
+        
+        // 计算当前月在这个日期范围内的天数
+        let monthStart = new Date(current);
+        let monthEnd = new Date(lastDay);
+        
+        // 如果是起始月份，从起始日期开始
+        if (month === start.getMonth() && year === start.getFullYear()) {
+            monthStart = new Date(start);
+        }
+        
+        // 如果是结束月份，到结束日期为止
+        if (month === end.getMonth() && year === end.getFullYear()) {
+            monthEnd = new Date(end);
+        }
+        
+        // 计算这个月的天数（包含起始和结束日期）
+        const diffTime = monthEnd - monthStart;
+        const daysInMonth = Math.floor(diffTime / (1000 * 60 * 60 * 24)) + 1;
+        
+        if (daysInMonth > 0) {
+            monthlyDays.push(daysInMonth);
+        }
+        
+        // 移动到下个月的第一天
+        current = new Date(year, month + 1, 1);
+    }
+    
+    return monthlyDays;
 }
 
 // 初始化版本号显示
@@ -352,7 +409,7 @@ function generatePriceTable() {
             priceCell.style.fontSize = '13px';
         } else {
             // 其他列显示"-"
-            priceCell.textContent = '-';
+            priceCell.textContent = '----';
         }
         specialRow.appendChild(priceCell);
     });
