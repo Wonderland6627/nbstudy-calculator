@@ -98,7 +98,8 @@ label {
 }
 
 select,
-input[type="date"] {
+input[type="date"],
+input[type="number"] {
     width: 100%;
     padding: 12px 15px;
     border: 2px solid #e0e0e0;
@@ -110,10 +111,18 @@ input[type="date"] {
 }
 
 select:focus,
-input[type="date"]:focus {
+input[type="date"]:focus,
+input[type="number"]:focus {
     outline: none;
     border-color: #ff8c42;
     box-shadow: 0 0 0 3px rgba(255, 140, 66, 0.15);
+}
+
+input[type="checkbox"] {
+    width: 18px;
+    height: 18px;
+    cursor: pointer;
+    accent-color: #ff8c42;
 }
 
 .hint {

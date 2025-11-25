@@ -6,7 +6,7 @@ let seatMapConfig = {};
 let currentFloor = '2层';
 
 // 版本号 - 每次部署时更新此版本号
-const APP_VERSION = 'v0.0.9';
+const APP_VERSION = 'v0.1.0';
 
 // 加载配置文件
 async function loadConfig() {
@@ -90,7 +90,20 @@ function initSelectOptions() {
     });
 }
 
+// 统一的天数计算函数：计算两个日期之间的天数（包含起始和结束日期）
+// 规则：起始日当天和结束日当天都算在周期内
+function calculateDaysBetween(startDate, endDate) {
+    const start = new Date(startDate);
+    const end = new Date(endDate);
+    // 将起始日期设置为当天的00:00:00，结束日期设置为当天的23:59:59，确保包含完整的一天
+    start.setHours(0, 0, 0, 0);
+    end.setHours(23, 59, 59, 999);
+    const diffTime = Math.abs(end - start);
+    return Math.floor(diffTime / (1000 * 60 * 60 * 24)) + 1;
+}
+
 // 根据时长类型自动计算结束日期
+// 规则：起始日当天算第1天，结束日期 = 起始日期 + 配置天数 - 1
 function calculateEndDate() {
     const startDate = document.getElementById('startDate').value;
     const durationType = document.getElementById('durationType').value;
@@ -107,7 +120,7 @@ function calculateEndDate() {
     
     const start = new Date(startDate);
     const end = new Date(start);
-    end.setDate(end.getDate() + durationConfig.days);
+    end.setDate(end.getDate() + durationConfig.days - 1); // 减1因为包含起始日期
     
     // 格式化为 YYYY-MM-DD
     const endDateStr = end.toISOString().split('T')[0];
@@ -120,10 +133,17 @@ function calculatePrice() {
     const durationType = document.getElementById('durationType').value;
     const startDate = document.getElementById('startDate').value;
     const endDate = document.getElementById('endDate').value;
+    const freeDaysInput = document.getElementById('freeDays');
+    const freeDays = freeDaysInput ? parseInt(freeDaysInput.value) || 0 : 0;
     
     // 验证输入
     if (!seatType || !durationType || !startDate || !endDate) {
         alert('请填写完整信息');
+        return;
+    }
+    
+    if (freeDays < 0) {
+        alert('赠送天数不能为负数');
         return;
     }
     
@@ -134,10 +154,6 @@ function calculatePrice() {
         alert('结束日期必须晚于起始日期');
         return;
     }
-    
-    // 计算天数
-    const diffTime = Math.abs(end - start);
-    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
     
     // 获取座位类型和时长类型配置
     const seatConfig = seatTypes[seatType];
@@ -159,10 +175,18 @@ function calculatePrice() {
     // 获取时长类型对应的天数
     const durationDays = durationConfig.days;
     
+    // 计算实际天数（包含起始和结束日期）
+    // 使用统一的天数计算函数，确保起始日当天和结束日当天都算在周期内
+    const actualDays = calculateDaysBetween(startDate, endDate);
+    
+    // 赠送天数是在时长类型基础上增加，不影响价格计算
+    // 实际可用天数 = 套餐天数 + 赠送天数
+    const totalAvailableDays = durationDays + freeDays;
+    
     // 计算每天单价
     const dailyPrice = fixedPrice / durationDays;
     
-    // 计算价格
+    // 计算价格（基于实际使用天数，赠送天数不影响价格）
     let totalPrice = fixedPrice;
     let extraDays = 0;
     let extraPrice = 0;
@@ -170,22 +194,22 @@ function calculatePrice() {
     let hasLess = false;
     let lessDays = 0;
     
-    // 如果实际天数少于时长类型对应的天数，按每天单价计算
-    if (diffDays < durationDays) {
+    // 如果实际天数少于套餐天数，按每天单价计算
+    if (actualDays < durationDays) {
         hasLess = true;
-        lessDays = durationDays - diffDays;
+        lessDays = durationDays - actualDays;
         // 按每天单价计算：固定价格 / 周期天数 * 实际天数
-        totalPrice = Math.round(dailyPrice * diffDays * 100) / 100;
+        totalPrice = Math.round(dailyPrice * actualDays * 100) / 100;
     }
-    // 如果实际天数超过时长类型对应的天数，计算超出部分
-    else if (diffDays > durationDays) {
+    // 如果实际天数超过总可用天数（套餐天数+赠送天数），计算超出部分
+    else if (actualDays > totalAvailableDays) {
         hasExtra = true;
-        extraDays = diffDays - durationDays;
+        extraDays = actualDays - totalAvailableDays;
         // 按原周期单价计算超出部分：固定价格 / 周期天数 * 超出天数
         extraPrice = Math.round(dailyPrice * extraDays * 100) / 100; // 保留两位小数
         totalPrice = Math.round((fixedPrice + extraPrice) * 100) / 100;
     }
-    // 如果实际天数等于套餐天数，使用固定价格
+    // 如果实际天数在套餐天数到总可用天数之间，使用固定价格（赠送天数不收费）
     else {
         totalPrice = fixedPrice;
     }
@@ -193,17 +217,41 @@ function calculatePrice() {
     // 计算每天单价（用于显示，保留两位小数）
     const dailyPriceDisplay = Math.round(dailyPrice * 100) / 100;
     
+    // 计算赠送后的结束日期
+    const freeEndDate = freeDays > 0 ? calculateFreeEndDate(startDate, durationDays, freeDays) : null;
+    
     // 显示结果
-    displayResult(seatType, durationType, startDate, endDate, diffDays, totalPrice, fixedPrice, durationDays, hasExtra, extraDays, extraPrice, dailyPriceDisplay, hasLess, lessDays);
+    displayResult(seatType, durationType, startDate, endDate, actualDays, totalPrice, fixedPrice, durationDays, hasExtra, extraDays, extraPrice, dailyPriceDisplay, hasLess, lessDays, freeDays, totalAvailableDays, freeEndDate);
+}
+
+// 计算赠送后的结束日期
+// 规则：起始日当天算第1天，结束日期 = 起始日期 + 套餐天数 + 赠送天数 - 1
+function calculateFreeEndDate(startDate, durationDays, freeDays) {
+    const start = new Date(startDate);
+    const end = new Date(start);
+    end.setDate(end.getDate() + durationDays + freeDays - 1); // 减1因为包含起始日期
+    return end.toISOString().split('T')[0];
 }
 
 // 显示计算结果
-function displayResult(seatType, durationType, startDate, endDate, days, price, basePrice, durationDays, hasExtra, extraDays, extraPrice, dailyPrice, hasLess, lessDays) {
+function displayResult(seatType, durationType, startDate, endDate, days, price, basePrice, durationDays, hasExtra, extraDays, extraPrice, dailyPrice, hasLess, lessDays, freeDays, totalAvailableDays, freeEndDate) {
     document.getElementById('resultSeatType').textContent = seatTypes[seatType].name;
     document.getElementById('resultDurationType').textContent = durationTypes[durationType].name;
     document.getElementById('resultStartDate').textContent = formatDate(startDate);
     document.getElementById('resultEndDate').textContent = formatDate(endDate);
     document.getElementById('resultDays').textContent = days;
+    
+    // 显示赠送天数信息
+    const freeDaysInfo = document.getElementById('freeDaysInfo');
+    if (freeDaysInfo) {
+        if (freeDays > 0) {
+            freeDaysInfo.textContent = `（${durationTypes[durationType].name}${durationDays}天 + 赠送${freeDays}天 = 共${totalAvailableDays}天可用）`;
+            freeDaysInfo.style.display = 'block';
+        } else {
+            freeDaysInfo.textContent = '';
+            freeDaysInfo.style.display = 'none';
+        }
+    }
     
     // 计算并显示每个月的天数累计
     const monthlyDays = calculateMonthlyDays(startDate, endDate);
@@ -229,6 +277,20 @@ function displayResult(seatType, durationType, startDate, endDate, days, price, 
     extraDaysItem.style.display = 'none';
     lessDaysItem.style.display = 'none';
     
+    // 显示赠送天数信息
+    const freeDaysItem = document.getElementById('freeDaysItem');
+    if (freeDaysItem) {
+        if (freeDays > 0 && freeEndDate) {
+            // 显示正常周期和赠送后的结束日期
+            const normalEndDate = calculateFreeEndDate(startDate, durationDays, 0);
+            freeDaysItem.innerHTML = `• 正常周期：${durationDays}天（至${formatDate(normalEndDate)}），赠送${freeDays}天后可用至：${formatDate(freeEndDate)}`;
+            freeDaysItem.style.display = 'block';
+            priceDetailDiv.classList.remove('hidden');
+        } else {
+            freeDaysItem.style.display = 'none';
+        }
+    }
+    
     if (hasLess) {
         // 实际天数少于套餐天数
         document.getElementById('actualDays').textContent = days;
@@ -237,7 +299,7 @@ function displayResult(seatType, durationType, startDate, endDate, days, price, 
         lessDaysItem.style.display = 'block';
         priceDetailDiv.classList.remove('hidden');
     } else if (hasExtra) {
-        // 实际天数超过套餐天数
+        // 实际天数超过总可用天数（套餐+赠送）
         document.getElementById('basePeriodName').textContent = durationName;
         document.getElementById('basePeriodPrice').textContent = `${basePrice.toLocaleString('zh-CN')} 元`;
         document.getElementById('extraDays').textContent = extraDays;
@@ -248,8 +310,12 @@ function displayResult(seatType, durationType, startDate, endDate, days, price, 
         extraDaysItem.style.display = 'block';
         priceDetailDiv.classList.remove('hidden');
     } else {
-        // 实际天数等于套餐天数，不显示明细
-        priceDetailDiv.classList.add('hidden');
+        // 实际天数在套餐天数到总可用天数之间，使用固定价格
+        // 显示正常周期价格，如果有赠送天数也显示
+        document.getElementById('basePeriodName').textContent = durationName;
+        document.getElementById('basePeriodPrice').textContent = `${basePrice.toLocaleString('zh-CN')} 元`;
+        basePeriodItem.style.display = 'block';
+        priceDetailDiv.classList.remove('hidden');
     }
     
     const resultDiv = document.getElementById('result');
@@ -272,14 +338,18 @@ function formatDate(dateStr) {
 }
 
 // 计算每个月的天数累计
+// 规则：使用统一的天数计算逻辑，确保包含起始和结束日期
 function calculateMonthlyDays(startDate, endDate) {
     const start = new Date(startDate);
     const end = new Date(endDate);
     const monthlyDays = [];
     
+    // 设置时间边界，确保包含完整的一天
+    start.setHours(0, 0, 0, 0);
+    end.setHours(23, 59, 59, 999);
+    
     let current = new Date(start);
     current.setHours(0, 0, 0, 0);
-    end.setHours(23, 59, 59, 999);
     
     while (current <= end) {
         const year = current.getFullYear();
@@ -287,9 +357,11 @@ function calculateMonthlyDays(startDate, endDate) {
         
         // 计算当前月的最后一天
         const lastDay = new Date(year, month + 1, 0);
+        lastDay.setHours(23, 59, 59, 999);
         
         // 计算当前月在这个日期范围内的天数
-        let monthStart = new Date(current);
+        let monthStart = new Date(year, month, 1);
+        monthStart.setHours(0, 0, 0, 0);
         let monthEnd = new Date(lastDay);
         
         // 如果是起始月份，从起始日期开始
@@ -302,7 +374,7 @@ function calculateMonthlyDays(startDate, endDate) {
             monthEnd = new Date(end);
         }
         
-        // 计算这个月的天数（包含起始和结束日期）
+        // 使用统一的天数计算逻辑
         const diffTime = monthEnd - monthStart;
         const daysInMonth = Math.floor(diffTime / (1000 * 60 * 60 * 24)) + 1;
         
@@ -312,6 +384,7 @@ function calculateMonthlyDays(startDate, endDate) {
         
         // 移动到下个月的第一天
         current = new Date(year, month + 1, 1);
+        current.setHours(0, 0, 0, 0);
     }
     
     return monthlyDays;
@@ -364,10 +437,10 @@ function generatePriceTable() {
         const durationConfig = durationTypes[durationKey];
         const row = document.createElement('tr');
         
-        // 第一列：时长类型名称
+        // 第一列：时长类型名称（显示天数）
         const durationCell = document.createElement('td');
         durationCell.className = 'duration-type';
-        durationCell.textContent = durationConfig.name;
+        durationCell.textContent = `${durationConfig.name} - ${durationConfig.days}天`;
         row.appendChild(durationCell);
         
         // 后续列：各个座位类型对应的价格
@@ -396,7 +469,7 @@ function generatePriceTable() {
     // 第一列：次卡
     const specialDurationCell = document.createElement('td');
     specialDurationCell.className = 'duration-type';
-    specialDurationCell.textContent = '次卡';
+    specialDurationCell.textContent = '次卡 - 10次';
     specialRow.appendChild(specialDurationCell);
     
     // 后续列：根据座位类型显示内容
@@ -405,7 +478,7 @@ function generatePriceTable() {
         priceCell.className = 'price';
         if (seatKey === '大厅') {
             // 大厅列显示次卡价格信息（两行显示）
-            priceCell.innerHTML = '180元/10次<br>（无固定座位）';
+            priceCell.innerHTML = '180元<br>（无固定座位）';
             priceCell.style.fontSize = '13px';
         } else {
             // 其他列显示"-"
@@ -672,6 +745,20 @@ function initApp() {
     document.getElementById('startDate').addEventListener('change', () => {
         if (document.getElementById('durationType').value) {
             calculateEndDate();
+        }
+    });
+    
+    // 赠送天数勾选框事件
+    const enableFreeDaysCheckbox = document.getElementById('enableFreeDays');
+    const freeDaysContainer = document.getElementById('freeDaysContainer');
+    const freeDaysInput = document.getElementById('freeDays');
+    
+    enableFreeDaysCheckbox.addEventListener('change', () => {
+        if (enableFreeDaysCheckbox.checked) {
+            freeDaysContainer.style.display = 'block';
+        } else {
+            freeDaysContainer.style.display = 'none';
+            freeDaysInput.value = '0'; // 取消勾选时重置为0
         }
     });
     

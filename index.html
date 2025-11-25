@@ -74,6 +74,17 @@
             </div>
         </div>
 
+        <div class="form-group">
+            <label style="display: flex; align-items: center; gap: 8px; cursor: pointer;">
+                <input type="checkbox" id="enableFreeDays" style="width: auto; cursor: pointer;">
+                <span>赠送天数</span>
+            </label>
+            <div id="freeDaysContainer" style="display: none; margin-top: 8px;">
+                <input type="number" id="freeDays" min="0" value="0" placeholder="0">
+                <small class="hint">可手动输入赠送天数</small>
+            </div>
+        </div>
+
         <div class="form-group button-group">
             <button id="priceListBtn" class="price-list-btn" title="查看价目表">价目表</button>
             <button id="calculateBtn" class="btn-primary">计算价格</button>
@@ -86,13 +97,14 @@
                 <p><strong>时长类型：</strong><span id="resultDurationType"></span></p>
                 <p><strong>起始日期：</strong><span id="resultStartDate"></span></p>
                 <p><strong>结束日期：</strong><span id="resultEndDate"></span></p>
-                <p><strong>总天数：</strong><span id="resultDays"></span> 天<span id="resultDaysBreakdown"></span></p>
+                <p><strong>总天数：</strong><span id="resultDays"></span> 天<span id="resultDaysBreakdown"></span><span id="freeDaysInfo" style="display: none;"></span></p>
                 
                 <div id="priceDetail" class="price-detail hidden">
                     <p><strong>费用明细：</strong></p>
                     <p class="detail-item" id="basePeriodItem">• <span id="basePeriodPrice"></span>（<span id="basePeriodName"></span>）</p>
                     <p class="detail-item" id="extraDaysItem">• <span id="extraDaysPrice"></span>（超出 <span id="extraDays"></span> 天，按照<span id="extraDurationName"></span>价格，每天 <span id="dailyPrice"></span> 元）</p>
-                    <p class="detail-item" id="lessDaysItem">• 实际使用 <span id="actualDays"></span> 天，按照<span id="lessDurationName"></span>价格，每天 <span id="lessDailyPrice"></span> 元计算</p>
+                    <p class="detail-item" id="lessDaysItem">• 计费 <span id="actualDays"></span> 天，按照<span id="lessDurationName"></span>价格，每天 <span id="lessDailyPrice"></span> 元计算</p>
+                    <p class="detail-item" id="freeDaysItem" style="display: none;"></p>
                 </div>
                 
                 <p class="price"><strong>总价格：</strong><span id="resultPrice"></span> 元</p>
@@ -113,7 +125,7 @@
     <script>
         // 动态添加版本号参数防止缓存
         (function() {
-            const version = 'v0.0.9';
+            const version = 'v0.1.0';
             const versionParam = version.replace('v', '').replace(/\./g, '');
             const timestamp = new Date().getTime();
             
