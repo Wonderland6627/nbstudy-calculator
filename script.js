@@ -256,7 +256,8 @@ function displayResult(seatType, durationType, startDate, endDate, days, price, 
     // 计算并显示每个月的天数累计
     const monthlyDays = calculateMonthlyDays(startDate, endDate);
     const daysBreakdownElement = document.getElementById('resultDaysBreakdown');
-    if (monthlyDays.length > 0) {
+    // 只有当有多个数字相加时才显示括号（比如20+10），单个数字不显示
+    if (monthlyDays.length > 1) {
         const breakdownText = `（${monthlyDays.join('+')}）`;
         daysBreakdownElement.textContent = breakdownText;
     } else {
