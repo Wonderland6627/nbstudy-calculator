@@ -6,7 +6,7 @@ let seatMapConfig = {};
 let currentFloor = '2层';
 
 // 版本号 - 每次部署时更新此版本号
-const APP_VERSION = 'v0.1.0';
+const APP_VERSION = 'v0.1.1';
 
 // 加载配置文件
 async function loadConfig() {
