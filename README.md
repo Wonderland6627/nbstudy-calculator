@@ -212,3 +212,8 @@ https://你的用户名.github.io/仓库名/
 3. GitHub Pages 部署状态是否正常（在仓库的 **Actions** 标签页查看）
 4. 仓库设置中 Pages 功能是否已启用
 
+## 目前部署平台
+Github Pages
+Vercel
+Cloudflare Works&Pages
+WeChatCloudDev
