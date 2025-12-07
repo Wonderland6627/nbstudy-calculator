@@ -108,6 +108,81 @@ input[type="number"] {
     transition: all 0.3s;
     background: white;
     color: #333;
+    height: 48px; /* 固定高度，确保所有表单元素高度一致 */
+    box-sizing: border-box; /* 确保padding计算正确 */
+}
+
+/* iOS日期输入框样式重置 */
+input[type="date"] {
+    -webkit-appearance: none;
+    appearance: none;
+    -webkit-border-radius: 10px;
+    border-radius: 10px;
+    height: 48px; /* 固定高度，确保选中和未选中状态一致 */
+    line-height: 1.5; /* 设置行高 */
+    box-sizing: border-box; /* 确保padding计算正确 */
+    display: flex; /* 使用flex布局确保内容垂直居中 */
+    align-items: center; /* 垂直居中对齐 */
+}
+
+/* 确保空状态的日期输入框也有正确高度 */
+input[type="date"]:invalid {
+    color: #999; /* 未选择时显示灰色占位符 */
+    height: 48px; /* 确保未选中时也有固定高度 */
+}
+
+input[type="date"]:invalid::-webkit-datetime-edit {
+    color: #999;
+}
+
+input[type="date"]:invalid::-webkit-datetime-edit-month-field,
+input[type="date"]:invalid::-webkit-datetime-edit-day-field,
+input[type="date"]:invalid::-webkit-datetime-edit-year-field {
+    color: #999;
+}
+
+/* iOS日期输入框内部元素样式重置 */
+input[type="date"]::-webkit-datetime-edit {
+    padding: 0;
+    color: #333;
+    line-height: 48px; /* 设置行高与输入框高度一致，确保垂直居中 */
+    height: 48px; /* 固定高度与输入框一致 */
+    display: inline-block; /* 确保可以设置高度 */
+    vertical-align: middle; /* 垂直对齐 */
+}
+
+input[type="date"]::-webkit-datetime-edit-fields-wrapper {
+    padding: 0;
+    display: flex;
+    align-items: center; /* 垂直居中对齐 */
+    height: 100%; /* 占满父元素高度 */
+    line-height: 48px; /* 行高与输入框高度一致 */
+}
+
+input[type="date"]::-webkit-datetime-edit-text {
+    color: #333;
+    padding: 0 2px;
+    line-height: 48px; /* 行高与输入框高度一致 */
+    vertical-align: middle; /* 垂直对齐 */
+}
+
+input[type="date"]::-webkit-datetime-edit-month-field,
+input[type="date"]::-webkit-datetime-edit-day-field,
+input[type="date"]::-webkit-datetime-edit-year-field {
+    color: #333;
+    padding: 0;
+    line-height: 48px; /* 行高与输入框高度一致 */
+    height: 48px; /* 固定高度与输入框一致 */
+    vertical-align: middle; /* 垂直对齐 */
+    display: inline-block; /* 确保可以设置高度 */
+}
+
+input[type="date"]::-webkit-inner-spin-button,
+input[type="date"]::-webkit-calendar-picker-indicator {
+    opacity: 1;
+    cursor: pointer;
+    padding: 0;
+    margin-left: 5px;
 }
 
 select:focus,
@@ -625,6 +700,79 @@ input[type="checkbox"] {
     input[type="date"] {
         padding: 10px 12px;
         font-size: 16px;
+        height: 48px; /* 固定高度，确保所有表单元素高度一致 */
+    }
+    
+    /* iOS日期输入框移动端样式重置 */
+    input[type="date"] {
+        -webkit-appearance: none;
+        appearance: none;
+        -webkit-border-radius: 10px;
+        border-radius: 10px;
+        height: 48px; /* 固定高度，确保选中和未选中状态一致 */
+        line-height: 1.5; /* 设置行高 */
+        box-sizing: border-box; /* 确保padding计算正确 */
+        display: flex; /* 使用flex布局确保内容垂直居中 */
+        align-items: center; /* 垂直居中对齐 */
+    }
+    
+    /* 确保空状态的日期输入框也有正确高度 */
+    input[type="date"]:invalid {
+        color: #999; /* 未选择时显示灰色占位符 */
+        height: 48px; /* 确保未选中时也有固定高度 */
+    }
+    
+    input[type="date"]:invalid::-webkit-datetime-edit {
+        color: #999;
+    }
+    
+    input[type="date"]:invalid::-webkit-datetime-edit-month-field,
+    input[type="date"]:invalid::-webkit-datetime-edit-day-field,
+    input[type="date"]:invalid::-webkit-datetime-edit-year-field {
+        color: #999;
+    }
+    
+    input[type="date"]::-webkit-datetime-edit {
+        padding: 0;
+        color: #333;
+        line-height: 48px; /* 设置行高与输入框高度一致，确保垂直居中 */
+        height: 48px; /* 固定高度与输入框一致 */
+        display: inline-block; /* 确保可以设置高度 */
+        vertical-align: middle; /* 垂直对齐 */
+    }
+    
+    input[type="date"]::-webkit-datetime-edit-fields-wrapper {
+        padding: 0;
+        display: flex;
+        align-items: center; /* 垂直居中对齐 */
+        height: 100%; /* 占满父元素高度 */
+        line-height: 48px; /* 行高与输入框高度一致 */
+    }
+    
+    input[type="date"]::-webkit-datetime-edit-text {
+        color: #333;
+        padding: 0 2px;
+        line-height: 48px; /* 行高与输入框高度一致 */
+        vertical-align: middle; /* 垂直对齐 */
+    }
+    
+    input[type="date"]::-webkit-datetime-edit-month-field,
+    input[type="date"]::-webkit-datetime-edit-day-field,
+    input[type="date"]::-webkit-datetime-edit-year-field {
+        color: #333;
+        padding: 0;
+        line-height: 48px; /* 行高与输入框高度一致 */
+        height: 48px; /* 固定高度与输入框一致 */
+        vertical-align: middle; /* 垂直对齐 */
+        display: inline-block; /* 确保可以设置高度 */
+    }
+    
+    input[type="date"]::-webkit-inner-spin-button,
+    input[type="date"]::-webkit-calendar-picker-indicator {
+        opacity: 1;
+        cursor: pointer;
+        padding: 0;
+        margin-left: 5px;
     }
     
     .btn-primary {
