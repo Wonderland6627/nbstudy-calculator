@@ -213,7 +213,8 @@ https://你的用户名.github.io/仓库名/
 4. 仓库设置中 Pages 功能是否已启用
 
 ## 目前部署平台
-Github Pages
-Vercel
-Cloudflare Works&Pages
-WeChatCloudDev
+Github Pages: https://wonderland6627.github.io/nbstudy-calculator/
+Vercel (deleted)
+Cloudflare Works&Pages: https://nbstudy-calculator.wonderland6627.workers.dev/
+WeChatCloudDev: https://cloud1-8gewsvyn8efe62b8-1327447321.tcloudbaseapp.com/nbstudy-calculator/index.html
+Tencent Cloudbase: https://cloud1-8gewsvyn8efe62b8-1327447321.tcloudbaseapp.com/nbstudy-calculator/
