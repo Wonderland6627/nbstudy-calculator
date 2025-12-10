@@ -4,7 +4,8 @@
   "description": "宁博自习室价格计算器 - 纯静态网站",
   "private": true,
   "scripts": {
-    "start": "echo 'This is a static website. No build process needed.'"
+    "start": "echo 'This is a static website. No build process needed.'",
+    "build": "echo 'No build step required for static website'"
   },
   "keywords": [
     "calculator",
