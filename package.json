@@ -1,0 +1,16 @@
+{
+  "name": "nbstudy-calculator",
+  "version": "0.1.0",
+  "description": "宁博自习室价格计算器 - 纯静态网站",
+  "private": true,
+  "scripts": {
+    "start": "echo 'This is a static website. No build process needed.'"
+  },
+  "keywords": [
+    "calculator",
+    "static-website"
+  ],
+  "author": "",
+  "license": "MIT"
+}
+
