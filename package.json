@@ -5,7 +5,7 @@
   "private": true,
   "scripts": {
     "start": "echo 'This is a static website. No build process needed.'",
-    "build": "echo 'No build step required for static website'"
+    "build": "mkdir -p dist && cp index.html script.js style.css config.json seat-map.json dist/ 2>/dev/null || true"
   },
   "keywords": [
     "calculator",
